@@ -1,4 +1,5 @@
 import { micromark } from 'micromark';
+import { useState } from 'react';
 import baseStyle from '../index.css?inline';
 
 type Props = {
@@ -6,7 +7,14 @@ type Props = {
   cssContent: string
 }
 
-function Previewer({ markdownContent, cssContent }: Props): JSX.Element {
+let debounceTimer: number;
+
+function Previewer(props: Props): JSX.Element {
+  const [debouncedProps, setDebouncedProps] = useState({ markdownContent: '', cssContent: '' });
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => setDebouncedProps(props), 250);
+
+  const { markdownContent, cssContent } = debouncedProps;
   let previewDocument = '<head><title>Document</title><style>' + baseStyle + cssContent + '</style></head>' + micromark(markdownContent);
 
   return (
@@ -16,4 +24,4 @@ function Previewer({ markdownContent, cssContent }: Props): JSX.Element {
   );
 }
 
-export default Previewer
+export default Previewer;
